@@ -2,16 +2,17 @@ import { Icon, Row, Text, ThemeButton } from "@umami/react-zen";
 import { LanguageButton } from "@/components/input/LanguageButton";
 import { PreferencesButton } from "@/components/input/PreferencesButton";
 import { Logo } from "@/components/svg";
+import { APP_NAME, HOMEPAGE_URL } from "@/lib/constants";
 
 export function Header() {
   return (
     <Row as="header" justifyContent="space-between" alignItems="center" paddingY="3">
-      <a href="https://syncfuse.io" target="_blank" rel="noopener">
+      <a href={HOMEPAGE_URL} target="_blank" rel="noopener">
         <Row alignItems="center" gap>
           <Icon>
             <Logo />
           </Icon>
-          <Text weight="bold">Syncfuse</Text>
+          <Text weight="bold">{APP_NAME}</Text>
         </Row>
       </a>
       <Row alignItems="center" gap>

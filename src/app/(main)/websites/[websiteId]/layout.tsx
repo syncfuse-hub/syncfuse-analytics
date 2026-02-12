@@ -9,7 +9,7 @@ export default async function ({ children, params }: { children: any; params: Pr
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Syncfuse",
-    default: "Websites | Syncfuse",
+    template: `%s | ${process.env.APP_NAME || "Syncfuse"}`,
+    default: `Websites | ${process.env.APP_NAME || "Syncfuse"}`,
   },
 };

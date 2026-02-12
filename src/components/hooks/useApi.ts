@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
-import { getClientAuthToken } from '@/lib/client';
-import { SHARE_TOKEN_HEADER } from '@/lib/constants';
-import { type FetchResponse, httpDelete, httpGet, httpPost, httpPut } from '@/lib/fetch';
-import { useApp } from '@/store/app';
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { getClientAuthToken } from "@/lib/client";
+import { SHARE_TOKEN_HEADER } from "@/lib/constants";
+import { type FetchResponse, httpDelete, httpGet, httpPost, httpPut } from "@/lib/fetch";
+import { useApp } from "@/store/app";
 
 const selector = (state: { shareToken: { token?: string } }) => state.shareToken;
 
@@ -26,7 +26,7 @@ export function useApi() {
   const basePath = process.env.basePath;
 
   const getUrl = (url: string) => {
-    return url.startsWith('http') ? url : `${basePath || ''}/api${url}`;
+    return url.startsWith("http") ? url : `${basePath || ""}/api${url}`;
   };
 
   const getHeaders = (headers: any = {}) => {

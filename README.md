@@ -44,6 +44,7 @@ Create an `.env` file with the following:
 
 ```bash
 DATABASE_URL=connection-url
+APP_SECRET=your-random-secret-here
 ```
 
 The connection URL format:
@@ -51,6 +52,32 @@ The connection URL format:
 ```bash
 postgresql://username:mypassword@localhost:5432/mydb
 ```
+
+#### White-Label / Branding Configuration (Optional)
+
+You can customize the application name and URLs for white-labeling by adding these environment variables to your `.env` file:
+
+```bash
+# Application name (displayed in UI, default: "Syncfuse")
+APP_NAME=YourBrand
+
+# Homepage URL (used in footer and external links)
+HOMEPAGE_URL=https://yourdomain.com
+
+# Documentation URL
+DOCS_URL=https://yourdomain.com/docs
+
+# Repository URL
+REPO_URL=https://github.com/yourorg/yourrepo
+
+# Updates check URL
+UPDATES_URL=https://api.yourdomain.com/v1/updates
+
+# Telemetry pixel URL
+TELEMETRY_URL=https://i.yourdomain.com/a.png
+```
+
+If these variables are not set, the application will use the default Syncfuse branding. See [.env.example](.env.example) for all available configuration options.
 
 ### Build the Application
 

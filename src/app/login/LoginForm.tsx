@@ -25,7 +25,7 @@ export function LoginForm() {
       <Icon size="lg">
         <Logo />
       </Icon>
-      <Heading>Syncfuse</Heading>
+      <Heading>{APP_NAME}</Heading>
       <Form onSubmit={handleSubmit} error={getErrorMessage(error)}>
         <FormField label={formatMessage(labels.username)} data-test="input-username" name="username" rules={{ required: formatMessage(labels.required) }}>
           <TextField autoComplete="username" />

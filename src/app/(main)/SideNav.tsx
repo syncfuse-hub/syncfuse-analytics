@@ -7,6 +7,7 @@ import { LanguageButton } from "@/components/input/LanguageButton";
 import { NavButton } from "@/components/input/NavButton";
 import { PanelButton } from "@/components/input/PanelButton";
 import { Logo } from "@/components/svg";
+import { APP_NAME } from "@/lib/constants";
 
 export function SideNav(props: SidebarProps) {
   const { formatMessage, labels } = useMessages();
@@ -43,7 +44,7 @@ export function SideNav(props: SidebarProps) {
   return (
     <Sidebar {...props} isCollapsed={isCollapsed || hasNav} backgroundColor>
       <SidebarSection onClick={() => setIsCollapsed(false)}>
-        <SidebarHeader label="Syncfuse" icon={isCollapsed && !hasNav ? <PanelLeft /> : <Logo />} style={{ maxHeight: 40 }}>
+        <SidebarHeader label={APP_NAME} icon={isCollapsed && !hasNav ? <PanelLeft /> : <Logo />} style={{ maxHeight: 40 }}>
           {!isCollapsed && !hasNav && <PanelButton />}
         </SidebarHeader>
       </SidebarSection>

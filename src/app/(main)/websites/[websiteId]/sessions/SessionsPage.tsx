@@ -8,8 +8,9 @@ import { useMessages } from "@/components/hooks";
 import { getItem, setItem } from "@/lib/storage";
 import { SessionProperties } from "./SessionProperties";
 import { SessionsDataTable } from "./SessionsDataTable";
+import { LOCALE_CONFIG } from "@/lib/constants";
 
-const KEY_NAME = "syncfuse.sessions.tab";
+const KEY_NAME = `${LOCALE_CONFIG.split(".")[0]}.sessions.tab`;
 
 export function SessionsPage({ websiteId }) {
   const [tab, setTab] = useState(getItem(KEY_NAME) || "activity");

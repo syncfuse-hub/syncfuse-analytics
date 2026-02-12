@@ -3,7 +3,7 @@ import { isbot } from "isbot";
 import { serializeError } from "serialize-error";
 import { z } from "zod";
 import clickhouse from "@/lib/clickhouse";
-import { COLLECTION_TYPE, EVENT_TYPE } from "@/lib/constants";
+import { COLLECTION_TYPE, EVENT_TYPE, SHARE_TOKEN_HEADER } from "@/lib/constants";
 import { hash, secret, uuid } from "@/lib/crypto";
 import { getClientInfo, hasBlockedIp } from "@/lib/detect";
 import { createToken, parseToken } from "@/lib/jwt";
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     let cache: Cache | null = null;
 
     if (websiteId) {
-      const cacheHeader = request.headers.get("x-syncfuse-cache");
+      const cacheHeader = request.headers.get(SHARE_TOKEN_HEADER.replace("share-token", "cache"));
 
       if (cacheHeader) {
         const result = await parseToken(cacheHeader, secret());

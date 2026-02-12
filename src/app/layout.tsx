@@ -43,7 +43,7 @@ export default function ({ children }) {
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Syncfuse",
-    default: "Syncfuse",
+    template: `%s | ${process.env.APP_NAME || "Syncfuse"}`,
+    default: process.env.APP_NAME || "Syncfuse",
   },
 };

@@ -10,8 +10,9 @@ import { MetricsTable } from "@/components/metrics/MetricsTable";
 import { getItem, setItem } from "@/lib/storage";
 import { EventProperties } from "./EventProperties";
 import { EventsDataTable } from "./EventsDataTable";
+import { LOCALE_CONFIG } from "@/lib/constants";
 
-const KEY_NAME = "syncfuse.events.tab";
+const KEY_NAME = `${LOCALE_CONFIG.split(".")[0]}.events.tab`;
 
 export function EventsPage({ websiteId }) {
   const [tab, setTab] = useState(getItem(KEY_NAME) || "chart");
