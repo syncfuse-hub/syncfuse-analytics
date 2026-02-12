@@ -14,6 +14,14 @@ const frameAncestors = process.env.ALLOWED_FRAME_URLS || "";
 const trackerScriptName = process.env.TRACKER_SCRIPT_NAME || "";
 const trackerScriptURL = process.env.TRACKER_SCRIPT_URL || "";
 
+// Branding configuration
+const appName = process.env.APP_NAME || "Syncfuse";
+const homepageUrl = process.env.HOMEPAGE_URL || "https://syncfuse.io";
+const docsUrl = process.env.DOCS_URL || "https://syncfuse.io/docs";
+const repoUrl = process.env.REPO_URL || "https://github.com/syncfuse/syncfuse";
+const updatesUrl = process.env.UPDATES_URL || "https://api.syncfuse.io/v1/updates";
+const telemetryUrl = process.env.TELEMETRY_URL || "https://i.syncfuse.io/a.png";
+
 const contentSecurityPolicy = `
   default-src 'self';
   img-src 'self' https: data:;
@@ -171,6 +179,13 @@ export default {
     cloudUrl,
     currentVersion: pkg.version,
     defaultLocale,
+    // Branding
+    APP_NAME: appName,
+    HOMEPAGE_URL: homepageUrl,
+    DOCS_URL: docsUrl,
+    REPO_URL: repoUrl,
+    UPDATES_URL: updatesUrl,
+    TELEMETRY_URL: telemetryUrl,
   },
   basePath,
   output: "standalone",

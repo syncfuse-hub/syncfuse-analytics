@@ -42,7 +42,7 @@ export function UpdateNotice({ user, config }) {
   return (
     <Column justifyContent="center" alignItems="center" position="fixed" top="10px" width="100%">
       <Row width="600px">
-        <AlertBanner title={`A new version of ${APP_NAME} v${latest} is available!`}>
+        <AlertBanner title={formatMessage(messages.newVersionAvailable, { app: APP_NAME, version: latest })}>
           <Button variant="primary" onPress={handleViewClick}>
             {formatMessage(labels.viewDetails)}
           </Button>
