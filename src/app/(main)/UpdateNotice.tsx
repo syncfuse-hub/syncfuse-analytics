@@ -1,10 +1,10 @@
-import { AlertBanner, Button, Column, Row } from '@umami/react-zen';
-import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
-import { useMessages } from '@/components/hooks';
-import { REPO_URL, VERSION_CHECK } from '@/lib/constants';
-import { setItem } from '@/lib/storage';
-import { checkVersion, useVersion } from '@/store/version';
+import { AlertBanner, Button, Column, Row } from "@umami/react-zen";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { useMessages } from "@/components/hooks";
+import { APP_NAME, REPO_URL, VERSION_CHECK } from "@/lib/constants";
+import { setItem } from "@/lib/storage";
+import { checkVersion, useVersion } from "@/store/version";
 
 export function UpdateNotice({ user, config }) {
   const { formatMessage, labels, messages } = useMessages();
@@ -12,14 +12,7 @@ export function UpdateNotice({ user, config }) {
   const pathname = usePathname();
   const [dismissed, setDismissed] = useState(checked);
 
-  const allowUpdate =
-    process.env.NODE_ENV === 'production' &&
-    user?.isAdmin &&
-    !config?.updatesDisabled &&
-    !config?.privateMode &&
-    !pathname.includes('/share/') &&
-    !process.env.cloudMode &&
-    !dismissed;
+  const allowUpdate = process.env.NODE_ENV === "production" && user?.isAdmin && !config?.updatesDisabled && !config?.privateMode && !pathname.includes("/share/") && !process.env.cloudMode && !dismissed;
 
   const updateCheck = useCallback(() => {
     setItem(VERSION_CHECK, { version: latest, time: Date.now() });
@@ -28,7 +21,7 @@ export function UpdateNotice({ user, config }) {
   function handleViewClick() {
     updateCheck();
     setDismissed(true);
-    open(releaseUrl || REPO_URL, '_blank');
+    open(releaseUrl || REPO_URL, "_blank");
   }
 
   function handleDismissClick() {
@@ -49,7 +42,7 @@ export function UpdateNotice({ user, config }) {
   return (
     <Column justifyContent="center" alignItems="center" position="fixed" top="10px" width="100%">
       <Row width="600px">
-        <AlertBanner title={formatMessage(messages.newVersionAvailable, { version: `v${latest}` })}>
+        <AlertBanner title={`A new version of ${APP_NAME} v${latest} is available!`}>
           <Button variant="primary" onPress={handleViewClick}>
             {formatMessage(labels.viewDetails)}
           </Button>

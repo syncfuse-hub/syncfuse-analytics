@@ -3,7 +3,7 @@ export type TrackedProperties = {
    * Hostname of server
    *
    * @description extracted from `window.location.hostname`
-   * @example 'analytics.syncfuse.io'
+   * @example 'analytics.example.com'
    */
   hostname: string;
 
@@ -19,7 +19,7 @@ export type TrackedProperties = {
    * Page referrer
    *
    * @description extracted from `window.navigator.language`
-   * @example 'https://analytics.syncfuse.io/docs/getting-started'
+   * @example 'https://example.com/docs/getting-started'
    */
   referrer: string;
 
@@ -35,7 +35,7 @@ export type TrackedProperties = {
    * Page title
    *
    * @description extracted from `document.querySelector('head > title')`
-   * @example 'syncfuse'
+   * @example 'My Analytics Platform'
    */
   title: string;
 
@@ -79,13 +79,22 @@ export type EventProperties = {
 export type PageViewProperties = WithRequired<TrackedProperties, "website">;
 export type CustomEventFunction = (props: PageViewProperties) => EventProperties | PageViewProperties;
 
+/**
+ * Tracker interface
+ *
+ * Note: The global object name is determined by APP_NAME environment variable at build time.
+ * Default is 'syncfuse', but can be customized (e.g., 'mycustomanalytics').
+ *
+ * @example window.syncfuse.track() // when APP_NAME=Syncfuse
+ * @example window.myanalytics.track() // when APP_NAME=MyAnalytics
+ */
 export type SyncfuseTracker = {
   track: {
     /**
      * Track a page view
      *
      * @example ```
-     * syncfuse.track();
+     * tracker.track();
      * ```
      */
     (): Promise<string>;
@@ -96,7 +105,7 @@ export type SyncfuseTracker = {
      * NOTE: event names will be truncated past 50 characters
      *
      * @example ```
-     * syncfuse.track('signup-button');
+     * tracker.track('signup-button');
      * ```
      */
     (eventName: string): Promise<string>;
@@ -109,7 +118,7 @@ export type SyncfuseTracker = {
      * When tracking events, the default properties are included in the payload. This is equivalent to running:
      *
      * ```js
-     * syncfuse.track(props => ({
+     * tracker.track(props => ({
      *   ...props,
      *   name: 'signup-button',
      *   data: {
@@ -120,7 +129,7 @@ export type SyncfuseTracker = {
      * ```
      *
      * @example ```
-     * syncfuse.track('signup-button', { name: 'newsletter', id: 123 });
+     * tracker.track('signup-button', { name: 'newsletter', id: 123 });
      * ```
      */
     (eventName: string, obj: EventData): Promise<string>;
@@ -129,7 +138,7 @@ export type SyncfuseTracker = {
      * Tracks a page view with custom properties
      *
      * @example ```
-     * syncfuse.track({ website: 'e676c9b4-11e4-4ef1-a4d7-87001773e9f2', url: '/home', title: 'Home page' });
+     * tracker.track({ website: 'e676c9b4-11e4-4ef1-a4d7-87001773e9f2', url: '/home', title: 'Home page' });
      * ```
      */
     (properties: PageViewProperties): Promise<string>;
@@ -139,13 +148,20 @@ export type SyncfuseTracker = {
      * If you don't specify any `name` and/or `data`, it will be treated as a page view
      *
      * @example ```
-     * syncfuse.track((props) => ({ ...props, url: path }));
+     * tracker.track((props) => ({ ...props, url: path }));
      * ```
      */
     (eventFunction: CustomEventFunction): Promise<string>;
   };
 };
 
+/**
+ * Window interface is extended with the tracker object.
+ * The property name matches your APP_NAME environment variable (lowercase).
+ *
+ * @example window.syncfuse // when APP_NAME=Syncfuse (default)
+ * @example window.myanalytics // when APP_NAME=MyAnalytics
+ */
 export interface Window {
   syncfuse: SyncfuseTracker;
 }

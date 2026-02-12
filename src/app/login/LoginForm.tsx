@@ -2,6 +2,7 @@ import { Column, Form, FormButtons, FormField, FormSubmitButton, Heading, Icon, 
 import { useRouter } from "next/navigation";
 import { useMessages, useUpdateQuery } from "@/components/hooks";
 import { Logo } from "@/components/svg";
+import { APP_NAME } from "@/lib/constants";
 import { setClientAuthToken } from "@/lib/client";
 import { setUser } from "@/store/app";
 

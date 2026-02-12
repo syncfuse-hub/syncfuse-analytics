@@ -53,6 +53,20 @@ The connection URL format:
 postgresql://username:mypassword@localhost:5432/mydb
 ```
 
+#### Default Admin Credentials (Optional)
+
+Customize the default admin user credentials for first-time setup and deployments:
+
+```bash
+# Default admin username (default: "syncfuse")
+DEFAULT_ADMIN_USERNAME=admin
+
+# Default admin password (default: "syncfuse")
+DEFAULT_ADMIN_PASSWORD=your-secure-password
+```
+
+**Important:** These credentials are automatically created/updated when the database is initialized or migrations run. Always change them in production! See [ADMIN-CREDENTIALS.md](ADMIN-CREDENTIALS.md) for details.
+
 #### White-Label / Branding Configuration (Optional)
 
 You can customize the application name and URLs for white-labeling by adding these environment variables to your `.env` file:
@@ -77,7 +91,7 @@ UPDATES_URL=https://api.yourdomain.com/v1/updates
 TELEMETRY_URL=https://i.yourdomain.com/a.png
 ```
 
-If these variables are not set, the application will use the default Syncfuse branding. See [.env.example](.env.example) for all available configuration options.
+If these variables are not set, the application will use the default Syncfuse branding. See [BRANDING-GUIDE.md](BRANDING-GUIDE.md) for complete white-labeling documentation.
 
 ### Build the Application
 

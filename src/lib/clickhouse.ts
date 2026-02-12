@@ -16,7 +16,7 @@ export const CLICKHOUSE_DATE_FORMATS = {
   year: "%Y-01-01",
 };
 
-const log = debug("syncfuse:clickhouse");
+const log = debug(`${process.env.APP_NAME?.toLowerCase() || "syncfuse"}:clickhouse`);
 
 let clickhouse: ClickHouseClient;
 const enabled = Boolean(process.env.CLICKHOUSE_URL);

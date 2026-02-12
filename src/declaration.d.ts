@@ -28,6 +28,14 @@ interface SyncfuseTracker {
   identify: (data: Record<string, any>) => Promise<string>;
 }
 
+/**
+ * Window interface extended with tracker.
+ * The global object name is determined by APP_NAME environment variable at build time.
+ * Default is 'syncfuse', but automatically changes based on your branding.
+ *
+ * @example window.syncfuse // when APP_NAME=Syncfuse (default)
+ * @example window.myanalytics // when APP_NAME=MyAnalytics
+ */
 interface Window {
   syncfuse: SyncfuseTracker;
 }

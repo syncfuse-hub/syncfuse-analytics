@@ -1,34 +1,27 @@
-import { Column, Label, Text, TextField } from '@umami/react-zen';
-import { useConfig, useMessages } from '@/components/hooks';
+import { Column, Label, Text, TextField } from "@umami/react-zen";
+import { useConfig, useMessages } from "@/components/hooks";
+import { APP_NAME } from "@/lib/constants";
 
-const SCRIPT_NAME = 'script.js';
+const SCRIPT_NAME = "script.js";
 
-export function WebsiteTrackingCode({
-  websiteId,
-  hostUrl,
-}: {
-  websiteId: string;
-  hostUrl?: string;
-}) {
+export function WebsiteTrackingCode({ websiteId, hostUrl }: { websiteId: string; hostUrl?: string }) {
   const { formatMessage, messages, labels } = useMessages();
   const config = useConfig();
 
-  const trackerScriptName =
-    config?.trackerScriptName?.split(',')?.map((n: string) => n.trim())?.[0] || SCRIPT_NAME;
+  const trackerScriptName = config?.trackerScriptName?.split(",")?.map((n: string) => n.trim())?.[0] || SCRIPT_NAME;
 
   const getUrl = () => {
     if (config?.cloudMode) {
       return `${process.env.cloudUrl}/${trackerScriptName}`;
     }
 
-    return `${hostUrl || window?.location?.origin || ''}${
-      process.env.basePath || ''
-    }/${trackerScriptName}`;
+    return `${hostUrl || window?.location?.origin || ""}${process.env.basePath || ""}/${trackerScriptName}`;
   };
 
-  const url = trackerScriptName?.startsWith('http') ? trackerScriptName : getUrl();
+  const url = trackerScriptName?.startsWith("http") ? trackerScriptName : getUrl();
 
-  const code = `<script defer src="${url}" data-website-id="${websiteId}"></script>`;
+  const trackerName = APP_NAME.toLowerCase();
+  const code = `<script defer src="${url}" data-website-id="${websiteId}" data-tracker-name="${trackerName}"></script>`;
 
   return (
     <Column gap>

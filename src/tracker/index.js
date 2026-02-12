@@ -34,8 +34,10 @@
   const host = hostUrl || "__COLLECT_API_HOST__" || currentScript.src.split("/").slice(0, -1).join("/");
   const endpoint = `${host.replace(/\/$/, "")}__COLLECT_API_ENDPOINT__`;
   const screen = `${width}x${height}`;
-  const eventRegex = /data-syncfuse-event-([\w-_]+)/;
-  const eventNameAttribute = `${_data}syncfuse-event`;
+  // Read tracker name from data attribute (runtime) or use build-time placeholder as fallback
+  const trackerName = attr(`${_data}tracker-name`) || "__TRACKER_NAME__";
+  const eventRegex = new RegExp(`data-${trackerName}-event-([\\w-_]+)`);
+  const eventNameAttribute = `${_data}${trackerName}-event`;
   const delayDuration = 300;
 
   /* Helper functions */
@@ -135,7 +137,7 @@
 
   /* Tracking functions */
 
-  const trackingDisabled = () => disabled || !website || localStorage?.getItem("syncfuse.disabled") || (domain && !domains.includes(hostname)) || (dnt && hasDoNotTrack());
+  const trackingDisabled = () => disabled || !website || localStorage?.getItem(`${trackerName}.disabled`) || (domain && !domains.includes(hostname)) || (dnt && hasDoNotTrack());
 
   const send = async (payload, type = "event") => {
     if (trackingDisabled()) return;
@@ -155,7 +157,7 @@
         body: JSON.stringify({ type, payload }),
         headers: {
           "Content-Type": "application/json",
-          ...(typeof cache !== "undefined" && { "x-syncfuse-cache": cache }),
+          ...(typeof cache !== "undefined" && { [`x-${trackerName}-cache`]: cache }),
         },
         credentials,
       });
@@ -204,8 +206,8 @@
 
   /* Start */
 
-  if (!window.syncfuse) {
-    window.syncfuse = {
+  if (!window[trackerName]) {
+    window[trackerName] = {
       track,
       identify,
     };

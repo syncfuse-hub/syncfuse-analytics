@@ -7,7 +7,7 @@ import redis from "@/lib/redis";
 import { ensureArray } from "@/lib/utils";
 import { getUser } from "@/queries/prisma/user";
 
-const log = debug("syncfuse:auth");
+const log = debug(`${process.env.APP_NAME?.toLowerCase() || "syncfuse"}:auth`);
 
 export function getBearerToken(request: Request) {
   const auth = request.headers.get("authorization");
