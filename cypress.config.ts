@@ -6,7 +6,7 @@ export default defineConfig({
   },
   // default username / password on init
   env: {
-    syncfuse_user: "admin",
+    syncfuse_user: "syncfuse",
     syncfuse_password: "syncfuse",
     syncfuse_user_id: "41e2b680-648e-4b09-bcd7-3e2b10c06264",
   },
