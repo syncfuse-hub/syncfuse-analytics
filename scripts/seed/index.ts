@@ -78,7 +78,7 @@ async function findAdminUser(prisma: PrismaClient): Promise<string> {
   });
 
   if (!adminUser) {
-    throw new Error("No admin user found in the database.\n" + "Please ensure you have run the initial setup and created an admin user.\n" + "The default admin user is created during first build (username: admin, password: syncfuse).");
+    throw new Error("No admin user found in the database.\n" + "Please ensure you have run the initial setup and created an admin user.\n" + "The default admin user is created during first build (username: syncfuse, password: syncfuse).");
   }
 
   return adminUser.id;

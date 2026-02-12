@@ -40,7 +40,7 @@ services:
       - db
     environment:
       - CYPRESS_baseUrl=http://syncfuse:3000
-      - CYPRESS_syncfuse_user=admin
+      - CYPRESS_syncfuse_user=syncfuse
       - CYPRESS_syncfuse_password=syncfuse
     volumes:
       - ./tsconfig.json:/tsconfig.json
