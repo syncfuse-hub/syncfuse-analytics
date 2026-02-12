@@ -20,19 +20,6 @@ function info(msg) {
   console.log(chalk.blueBright(`ℹ ${msg}`));
 }
 
-function warning(msg) {
-  console.log(chalk.yellowBright(`⚠ ${msg}`));
-}
-
-function validatePassword(password) {
-  if (password.length < 8) {
-    warning("Password is less than 8 characters. Consider using a stronger password.");
-  }
-  if (password === "syncfuse" || password === "admin" || password === "password") {
-    warning("You are using a common/default password. This is insecure for production!");
-  }
-}
-
 async function ensureDefaultAdmin() {
   const url = new URL(process.env.DATABASE_URL);
   const adapter = new PrismaPg({ connectionString: url.toString() }, { schema: url.searchParams.get("schema") });
@@ -42,39 +29,27 @@ async function ensureDefaultAdmin() {
     // Get credentials from environment or use defaults
     const username = process.env.DEFAULT_ADMIN_USERNAME || "syncfuse";
     const password = process.env.DEFAULT_ADMIN_PASSWORD || "syncfuse";
-    
-    // Validate password security
-    validatePassword(password);
-    
-    // Warn about default credentials
-    if (!process.env.DEFAULT_ADMIN_USERNAME && !process.env.DEFAULT_ADMIN_PASSWORD) {
-      warning("Using default credentials (syncfuse/syncfuse)");
-      warning("SECURITY RISK: Change these credentials immediately in production!");
-      if (process.env.NODE_ENV === "production") {
-        console.error(chalk.redBright("✗ CRITICAL: Default credentials detected in production environment!"));
-        console.error(chalk.redBright("  Set DEFAULT_ADMIN_USERNAME and DEFAULT_ADMIN_PASSWORD in your environment."));
-      }
-    }
-    
     const hashedPassword = hashPassword(password);
 
     // Check if default admin user exists
-    const existingUser = await prisma.use (username: ***)`);
-    } else {
-      // Create new admin user
-      await prisma.user.create({
+    const existingUser = await prisma.user.findUnique({
+      where: { id: DEFAULT_ADMIN_ID },
+    });
+
+    if (existingUser) {
+      // Update existing admin user if credentials have changed
+      await prisma.user.update({
+        where: { id: DEFAULT_ADMIN_ID },
         data: {
-          id: DEFAULT_ADMIN_ID,
           username: username,
           password: hashedPassword,
           role: "admin",
         },
       });
-      success(`Default admin user created (username: ***)`);
-    }
-
-    if (process.env.DEFAULT_ADMIN_USERNAME || process.env.DEFAULT_ADMIN_PASSWORD) {
-      info("Using custom credentials from environment variables
+      success(`Default admin user updated: ${username}`);
+    } else {
+      // Create new admin user
+      await prisma.user.create({
         data: {
           id: DEFAULT_ADMIN_ID,
           username: username,
