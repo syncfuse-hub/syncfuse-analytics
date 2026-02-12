@@ -479,7 +479,7 @@ export const messages = defineMessages({
   },
   newVersionAvailable: {
     id: "message.new-version-available",
-    defaultMessage: "A new version of Syncfuse {version} is available!",
+    defaultMessage: "A new version of {app} {version} is available!",
   },
   transferWebsite: {
     id: "message.transfer-website",
