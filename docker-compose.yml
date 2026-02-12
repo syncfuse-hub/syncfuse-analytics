@@ -1,7 +1,7 @@
 ---
 services:
   syncfuse:
-    image: ghcr.io/umami-software/umami:latest
+    image: ghcr.io/syncfuse/syncfuse:latest
     ports:
       - "3000:3000"
     environment:

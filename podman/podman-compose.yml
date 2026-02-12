@@ -3,7 +3,7 @@ version: "3.8"
 services:
   syncfuse:
     container_name: syncfuse
-    image: ghcr.io/umami-software/umami:postgresql-latest
+    image: ghcr.io/syncfuse/syncfuse:postgresql-latest
     ports:
       - "127.0.0.1:3000:3000"
     environment:
@@ -38,4 +38,4 @@ services:
       retries: 5
 
 volumes:
-  umami-db-data:
+  syncfuse-db-data:

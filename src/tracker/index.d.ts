@@ -3,7 +3,7 @@ export type TrackedProperties = {
    * Hostname of server
    *
    * @description extracted from `window.location.hostname`
-   * @example 'analytics.umami.is'
+   * @example 'analytics.syncfuse.io'
    */
   hostname: string;
 
@@ -19,7 +19,7 @@ export type TrackedProperties = {
    * Page referrer
    *
    * @description extracted from `window.navigator.language`
-   * @example 'https://analytics.umami.is/docs/getting-started'
+   * @example 'https://analytics.syncfuse.io/docs/getting-started'
    */
   referrer: string;
 

@@ -1,61 +1,49 @@
-import {
-  Row,
-  Sidebar,
-  SidebarHeader,
-  SidebarItem,
-  type SidebarProps,
-  SidebarSection,
-  ThemeButton,
-} from '@umami/react-zen';
-import Link from 'next/link';
-import type { Key } from 'react';
-import { useGlobalState, useMessages, useNavigation } from '@/components/hooks';
-import { Globe, Grid2x2, LinkIcon, PanelLeft } from '@/components/icons';
-import { LanguageButton } from '@/components/input/LanguageButton';
-import { NavButton } from '@/components/input/NavButton';
-import { PanelButton } from '@/components/input/PanelButton';
-import { Logo } from '@/components/svg';
+import { Row, Sidebar, SidebarHeader, SidebarItem, type SidebarProps, SidebarSection, ThemeButton } from "@umami/react-zen";
+import Link from "next/link";
+import type { Key } from "react";
+import { useGlobalState, useMessages, useNavigation } from "@/components/hooks";
+import { Globe, Grid2x2, LinkIcon, PanelLeft } from "@/components/icons";
+import { LanguageButton } from "@/components/input/LanguageButton";
+import { NavButton } from "@/components/input/NavButton";
+import { PanelButton } from "@/components/input/PanelButton";
+import { Logo } from "@/components/svg";
 
 export function SideNav(props: SidebarProps) {
   const { formatMessage, labels } = useMessages();
   const { pathname, renderUrl, websiteId, router } = useNavigation();
-  const [isCollapsed, setIsCollapsed] = useGlobalState('sidenav-collapsed');
+  const [isCollapsed, setIsCollapsed] = useGlobalState("sidenav-collapsed");
 
-  const hasNav = !!(websiteId || pathname.startsWith('/admin') || pathname.includes('/settings'));
+  const hasNav = !!(websiteId || pathname.startsWith("/admin") || pathname.includes("/settings"));
 
   const links = [
     {
-      id: 'websites',
+      id: "websites",
       label: formatMessage(labels.websites),
-      path: '/websites',
+      path: "/websites",
       icon: <Globe />,
     },
     {
-      id: 'links',
+      id: "links",
       label: formatMessage(labels.links),
-      path: '/links',
+      path: "/links",
       icon: <LinkIcon />,
     },
     {
-      id: 'pixels',
+      id: "pixels",
       label: formatMessage(labels.pixels),
-      path: '/pixels',
+      path: "/pixels",
       icon: <Grid2x2 />,
     },
   ];
 
   const handleSelect = (id: Key) => {
-    router.push(id === 'user' ? '/websites' : `/teams/${id}/websites`);
+    router.push(id === "user" ? "/websites" : `/teams/${id}/websites`);
   };
 
   return (
     <Sidebar {...props} isCollapsed={isCollapsed || hasNav} backgroundColor>
       <SidebarSection onClick={() => setIsCollapsed(false)}>
-        <SidebarHeader
-          label="umami"
-          icon={isCollapsed && !hasNav ? <PanelLeft /> : <Logo />}
-          style={{ maxHeight: 40 }}
-        >
+        <SidebarHeader label="Syncfuse" icon={isCollapsed && !hasNav ? <PanelLeft /> : <Logo />} style={{ maxHeight: 40 }}>
           {!isCollapsed && !hasNav && <PanelButton />}
         </SidebarHeader>
       </SidebarSection>
@@ -66,12 +54,7 @@ export function SideNav(props: SidebarProps) {
         {links.map(({ id, path, label, icon }) => {
           return (
             <Link key={id} href={renderUrl(path, false)} role="button">
-              <SidebarItem
-                label={label}
-                icon={icon}
-                isSelected={pathname.includes(path)}
-                role="button"
-              />
+              <SidebarItem label={label} icon={icon} isSelected={pathname.includes(path)} role="button" />
             </Link>
           );
         })}

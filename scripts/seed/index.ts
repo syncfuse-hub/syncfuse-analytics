@@ -1,35 +1,14 @@
 /* eslint-disable no-console */
-import 'dotenv/config';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient, Prisma } from '../../src/generated/prisma/client.js';
-import { uuid, generateDatesBetween, subDays, formatNumber, progressBar } from './utils.js';
-import { createSessions, type SessionData } from './generators/sessions.js';
-import {
-  generateEventsForSession,
-  type EventData,
-  type EventDataEntry,
-} from './generators/events.js';
-import {
-  generateRevenueForEvents,
-  type RevenueData,
-  type RevenueConfig,
-} from './generators/revenue.js';
-import { getSessionCountForDay } from './distributions/temporal.js';
-import {
-  BLOG_WEBSITE_NAME,
-  BLOG_WEBSITE_DOMAIN,
-  BLOG_SESSIONS_PER_DAY,
-  getBlogSiteConfig,
-  getBlogJourney,
-} from './sites/blog.js';
-import {
-  SAAS_WEBSITE_NAME,
-  SAAS_WEBSITE_DOMAIN,
-  SAAS_SESSIONS_PER_DAY,
-  getSaasSiteConfig,
-  getSaasJourney,
-  saasRevenueConfigs,
-} from './sites/saas.js';
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient, Prisma } from "../../src/generated/prisma/client.js";
+import { uuid, generateDatesBetween, subDays, formatNumber, progressBar } from "./utils.js";
+import { createSessions, type SessionData } from "./generators/sessions.js";
+import { generateEventsForSession, type EventData, type EventDataEntry } from "./generators/events.js";
+import { generateRevenueForEvents, type RevenueData, type RevenueConfig } from "./generators/revenue.js";
+import { getSessionCountForDay } from "./distributions/temporal.js";
+import { BLOG_WEBSITE_NAME, BLOG_WEBSITE_DOMAIN, BLOG_SESSIONS_PER_DAY, getBlogSiteConfig, getBlogJourney } from "./sites/blog.js";
+import { SAAS_WEBSITE_NAME, SAAS_WEBSITE_DOMAIN, SAAS_SESSIONS_PER_DAY, getSaasSiteConfig, getSaasJourney, saasRevenueConfigs } from "./sites/saas.js";
 
 const BATCH_SIZE = 1000;
 
@@ -52,93 +31,60 @@ export interface SeedResult {
   revenue: number;
 }
 
-async function batchInsertSessions(
-  prisma: PrismaClient,
-  data: SessionCreateInput[],
-  verbose: boolean,
-): Promise<void> {
+async function batchInsertSessions(prisma: PrismaClient, data: SessionCreateInput[], verbose: boolean): Promise<void> {
   for (let i = 0; i < data.length; i += BATCH_SIZE) {
     const batch = data.slice(i, i + BATCH_SIZE);
     await prisma.session.createMany({ data: batch, skipDuplicates: true });
     if (verbose) {
-      console.log(
-        `  Inserted ${Math.min(i + BATCH_SIZE, data.length)}/${data.length} session records`,
-      );
+      console.log(`  Inserted ${Math.min(i + BATCH_SIZE, data.length)}/${data.length} session records`);
     }
   }
 }
 
-async function batchInsertEvents(
-  prisma: PrismaClient,
-  data: WebsiteEventCreateInput[],
-  verbose: boolean,
-): Promise<void> {
+async function batchInsertEvents(prisma: PrismaClient, data: WebsiteEventCreateInput[], verbose: boolean): Promise<void> {
   for (let i = 0; i < data.length; i += BATCH_SIZE) {
     const batch = data.slice(i, i + BATCH_SIZE);
     await prisma.websiteEvent.createMany({ data: batch, skipDuplicates: true });
     if (verbose) {
-      console.log(
-        `  Inserted ${Math.min(i + BATCH_SIZE, data.length)}/${data.length} event records`,
-      );
+      console.log(`  Inserted ${Math.min(i + BATCH_SIZE, data.length)}/${data.length} event records`);
     }
   }
 }
 
-async function batchInsertEventData(
-  prisma: PrismaClient,
-  data: EventDataCreateInput[],
-  verbose: boolean,
-): Promise<void> {
+async function batchInsertEventData(prisma: PrismaClient, data: EventDataCreateInput[], verbose: boolean): Promise<void> {
   for (let i = 0; i < data.length; i += BATCH_SIZE) {
     const batch = data.slice(i, i + BATCH_SIZE);
     await prisma.eventData.createMany({ data: batch, skipDuplicates: true });
     if (verbose) {
-      console.log(
-        `  Inserted ${Math.min(i + BATCH_SIZE, data.length)}/${data.length} eventData records`,
-      );
+      console.log(`  Inserted ${Math.min(i + BATCH_SIZE, data.length)}/${data.length} eventData records`);
     }
   }
 }
 
-async function batchInsertRevenue(
-  prisma: PrismaClient,
-  data: RevenueCreateInput[],
-  verbose: boolean,
-): Promise<void> {
+async function batchInsertRevenue(prisma: PrismaClient, data: RevenueCreateInput[], verbose: boolean): Promise<void> {
   for (let i = 0; i < data.length; i += BATCH_SIZE) {
     const batch = data.slice(i, i + BATCH_SIZE);
     await prisma.revenue.createMany({ data: batch, skipDuplicates: true });
     if (verbose) {
-      console.log(
-        `  Inserted ${Math.min(i + BATCH_SIZE, data.length)}/${data.length} revenue records`,
-      );
+      console.log(`  Inserted ${Math.min(i + BATCH_SIZE, data.length)}/${data.length} revenue records`);
     }
   }
 }
 
 async function findAdminUser(prisma: PrismaClient): Promise<string> {
   const adminUser = await prisma.user.findFirst({
-    where: { role: 'admin' },
+    where: { role: "admin" },
     select: { id: true },
   });
 
   if (!adminUser) {
-    throw new Error(
-      'No admin user found in the database.\n' +
-        'Please ensure you have run the initial setup and created an admin user.\n' +
-        'The default admin user is created during first build (username: admin, password: umami).',
-    );
+    throw new Error("No admin user found in the database.\n" + "Please ensure you have run the initial setup and created an admin user.\n" + "The default admin user is created during first build (username: admin, password: syncfuse).");
   }
 
   return adminUser.id;
 }
 
-async function createWebsite(
-  prisma: PrismaClient,
-  name: string,
-  domain: string,
-  adminUserId: string,
-): Promise<string> {
+async function createWebsite(prisma: PrismaClient, name: string, domain: string, adminUserId: string): Promise<string> {
   const websiteId = uuid();
 
   await prisma.website.create({
@@ -155,7 +101,7 @@ async function createWebsite(
 }
 
 async function clearDemoData(prisma: PrismaClient): Promise<void> {
-  console.log('Clearing existing demo data...');
+  console.log("Clearing existing demo data...");
 
   const demoWebsites = await prisma.website.findMany({
     where: {
@@ -164,10 +110,10 @@ async function clearDemoData(prisma: PrismaClient): Promise<void> {
     select: { id: true },
   });
 
-  const websiteIds = demoWebsites.map(w => w.id);
+  const websiteIds = demoWebsites.map((w) => w.id);
 
   if (websiteIds.length === 0) {
-    console.log('  No existing demo websites found');
+    console.log("  No existing demo websites found");
     return;
   }
 
@@ -183,7 +129,7 @@ async function clearDemoData(prisma: PrismaClient): Promise<void> {
   await prisma.report.deleteMany({ where: { websiteId: { in: websiteIds } } });
   await prisma.website.deleteMany({ where: { id: { in: websiteIds } } });
 
-  console.log('  Cleared existing demo data');
+  console.log("  Cleared existing demo data");
 }
 
 interface SiteGeneratorConfig {
@@ -195,13 +141,7 @@ interface SiteGeneratorConfig {
   revenueConfigs?: RevenueConfig[];
 }
 
-async function generateSiteData(
-  prisma: PrismaClient,
-  config: SiteGeneratorConfig,
-  days: Date[],
-  adminUserId: string,
-  verbose: boolean,
-): Promise<{ sessions: number; events: number; eventData: number; revenue: number }> {
+async function generateSiteData(prisma: PrismaClient, config: SiteGeneratorConfig, days: Date[], adminUserId: string, verbose: boolean): Promise<{ sessions: number; events: number; eventData: number; revenue: number }> {
   console.log(`\nGenerating data for ${config.name}...`);
 
   const websiteId = await createWebsite(prisma, config.name, config.domain, adminUserId);
@@ -236,13 +176,11 @@ async function generateSiteData(
     // Show progress (every day in verbose mode, otherwise every 2 days)
     const shouldShowProgress = verbose || dayIndex % 2 === 0 || dayIndex === days.length - 1;
     if (shouldShowProgress) {
-      process.stdout.write(
-        `\r  ${progressBar(dayIndex + 1, days.length)} Day ${dayIndex + 1}/${days.length}`,
-      );
+      process.stdout.write(`\r  ${progressBar(dayIndex + 1, days.length)} Day ${dayIndex + 1}/${days.length}`);
     }
   }
 
-  console.log(''); // New line after progress bar
+  console.log(""); // New line after progress bar
 
   // Batch insert all data
   console.log(`  Inserting ${formatNumber(allSessions.length)} sessions...`);
@@ -272,30 +210,22 @@ async function generateSiteData(
 function createPrismaClient(): PrismaClient {
   const url = process.env.DATABASE_URL;
   if (!url) {
-    throw new Error(
-      'DATABASE_URL environment variable is not set.\n' +
-        'Please set DATABASE_URL in your .env file or environment.\n' +
-        'Example: DATABASE_URL=postgresql://user:password@localhost:5432/umami',
-    );
+    throw new Error("DATABASE_URL environment variable is not set.\n" + "Please set DATABASE_URL in your .env file or environment.\n" + "Example: DATABASE_URL=postgresql://user:password@localhost:5432/syncfuse");
   }
 
   let schema: string | undefined;
   try {
     const connectionUrl = new URL(url);
-    schema = connectionUrl.searchParams.get('schema') ?? undefined;
+    schema = connectionUrl.searchParams.get("schema") ?? undefined;
   } catch {
-    throw new Error(
-      'DATABASE_URL is not a valid URL.\n' +
-        'Expected format: postgresql://user:password@host:port/database\n' +
-        `Received: ${url.substring(0, 30)}...`,
-    );
+    throw new Error("DATABASE_URL is not a valid URL.\n" + "Expected format: postgresql://user:password@host:port/database\n" + `Received: ${url.substring(0, 30)}...`);
   }
 
   const adapter = new PrismaPg({ connectionString: url }, { schema });
 
   return new PrismaClient({
     adapter,
-    errorFormat: 'pretty',
+    errorFormat: "pretty",
   });
 }
 
@@ -308,9 +238,7 @@ export async function seed(config: SeedConfig): Promise<SeedResult> {
     const days = generateDatesBetween(startDate, endDate);
 
     console.log(`\nSeed Configuration:`);
-    console.log(
-      `  Date range: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`,
-    );
+    console.log(`  Date range: ${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}`);
     console.log(`  Days: ${days.length}`);
     console.log(`  Clear existing: ${config.clear}`);
 
@@ -361,15 +289,15 @@ export async function seed(config: SeedConfig): Promise<SeedResult> {
       revenue: blogResults.revenue + saasResults.revenue,
     };
 
-    console.log(`\n${'─'.repeat(50)}`);
+    console.log(`\n${"─".repeat(50)}`);
     console.log(`Seed Complete!`);
-    console.log(`${'─'.repeat(50)}`);
+    console.log(`${"─".repeat(50)}`);
     console.log(`  Websites:   ${formatNumber(result.websites)}`);
     console.log(`  Sessions:   ${formatNumber(result.sessions)}`);
     console.log(`  Events:     ${formatNumber(result.events)}`);
     console.log(`  Event Data: ${formatNumber(result.eventData)}`);
     console.log(`  Revenue:    ${formatNumber(result.revenue)}`);
-    console.log(`${'─'.repeat(50)}\n`);
+    console.log(`${"─".repeat(50)}\n`);
 
     return result;
   } finally {

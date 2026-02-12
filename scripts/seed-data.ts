@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 
 /**
- * Umami Sample Data Generator
+ * Syncfuse Sample Data Generator
  *
  * Generates realistic analytics data for local development and testing.
  * Creates two demo websites:
@@ -16,7 +16,7 @@
  *   npm run seed-data -- --verbose # Show detailed progress
  */
 
-import { seed, type SeedConfig } from './seed/index.js';
+import { seed, type SeedConfig } from "./seed/index.js";
 
 function parseArgs(): SeedConfig {
   const args = process.argv.slice(2);
@@ -30,24 +30,24 @@ function parseArgs(): SeedConfig {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
-    if (arg === '--days' && args[i + 1]) {
+    if (arg === "--days" && args[i + 1]) {
       config.days = parseInt(args[i + 1], 10);
       if (isNaN(config.days) || config.days < 1) {
-        console.error('Error: --days must be a positive integer');
+        console.error("Error: --days must be a positive integer");
         process.exit(1);
       }
       i++;
-    } else if (arg === '--clear') {
+    } else if (arg === "--clear") {
       config.clear = true;
-    } else if (arg === '--verbose' || arg === '-v') {
+    } else if (arg === "--verbose" || arg === "-v") {
       config.verbose = true;
-    } else if (arg === '--help' || arg === '-h') {
+    } else if (arg === "--help" || arg === "-h") {
       printHelp();
       process.exit(0);
-    } else if (arg.startsWith('--days=')) {
-      config.days = parseInt(arg.split('=')[1], 10);
+    } else if (arg.startsWith("--days=")) {
+      config.days = parseInt(arg.split("=")[1], 10);
       if (isNaN(config.days) || config.days < 1) {
-        console.error('Error: --days must be a positive integer');
+        console.error("Error: --days must be a positive integer");
         process.exit(1);
       }
     }
@@ -58,7 +58,7 @@ function parseArgs(): SeedConfig {
 
 function printHelp(): void {
   console.log(`
-Umami Sample Data Generator
+Syncfuse Sample Data Generator
 
 Generates realistic analytics data for local development and testing.
 
@@ -90,21 +90,21 @@ Note:
 function checkEnvironment(): void {
   const nodeEnv = process.env.NODE_ENV;
 
-  if (nodeEnv === 'production') {
-    console.error('\nError: seed-data cannot run in production environment.');
-    console.error('This script is only for local development and testing.\n');
+  if (nodeEnv === "production") {
+    console.error("\nError: seed-data cannot run in production environment.");
+    console.error("This script is only for local development and testing.\n");
     process.exit(1);
   }
 
   if (process.env.VERCEL || process.env.NETLIFY || process.env.RAILWAY_ENVIRONMENT) {
-    console.error('\nError: seed-data cannot run in cloud environments.');
-    console.error('This script is only for local development and testing.\n');
+    console.error("\nError: seed-data cannot run in cloud environments.");
+    console.error("This script is only for local development and testing.\n");
     process.exit(1);
   }
 }
 
 async function main(): Promise<void> {
-  console.log('\nUmami Sample Data Generator\n');
+  console.log("\nSyncfuse Sample Data Generator\n");
 
   checkEnvironment();
 
@@ -113,7 +113,7 @@ async function main(): Promise<void> {
   try {
     await seed(config);
   } catch (error) {
-    console.error('\nError generating seed data:', error);
+    console.error("\nError generating seed data:", error);
     process.exit(1);
   }
 }

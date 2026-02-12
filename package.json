@@ -4,10 +4,10 @@
   "description": "A modern, privacy-focused alternative to Google Analytics.",
   "author": "Syncfuse Analytics",
   "license": "MIT",
-  "homepage": "https://umami.is",
+  "homepage": "https://syncfuse.io",
   "repository": {
     "type": "git",
-    "url": "https://github.com/umami-software/umami.git"
+    "url": "https://github.com/syncfuse/syncfuse.git"
   },
   "type": "module",
   "scripts": {

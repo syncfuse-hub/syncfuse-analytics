@@ -1,18 +1,18 @@
-import { startOfHour, startOfMonth } from 'date-fns';
-import { isbot } from 'isbot';
-import { serializeError } from 'serialize-error';
-import { z } from 'zod';
-import clickhouse from '@/lib/clickhouse';
-import { COLLECTION_TYPE, EVENT_TYPE } from '@/lib/constants';
-import { hash, secret, uuid } from '@/lib/crypto';
-import { getClientInfo, hasBlockedIp } from '@/lib/detect';
-import { createToken, parseToken } from '@/lib/jwt';
-import { fetchWebsite } from '@/lib/load';
-import { parseRequest } from '@/lib/request';
-import { badRequest, forbidden, json, serverError } from '@/lib/response';
-import { anyObjectParam, urlOrPathParam } from '@/lib/schema';
-import { safeDecodeURI, safeDecodeURIComponent } from '@/lib/url';
-import { createSession, saveEvent, saveSessionData } from '@/queries/sql';
+import { startOfHour, startOfMonth } from "date-fns";
+import { isbot } from "isbot";
+import { serializeError } from "serialize-error";
+import { z } from "zod";
+import clickhouse from "@/lib/clickhouse";
+import { COLLECTION_TYPE, EVENT_TYPE } from "@/lib/constants";
+import { hash, secret, uuid } from "@/lib/crypto";
+import { getClientInfo, hasBlockedIp } from "@/lib/detect";
+import { createToken, parseToken } from "@/lib/jwt";
+import { fetchWebsite } from "@/lib/load";
+import { parseRequest } from "@/lib/request";
+import { badRequest, forbidden, json, serverError } from "@/lib/response";
+import { anyObjectParam, urlOrPathParam } from "@/lib/schema";
+import { safeDecodeURI, safeDecodeURIComponent } from "@/lib/url";
+import { createSession, saveEvent, saveSessionData } from "@/queries/sql";
 
 interface Cache {
   websiteId: string;
@@ -22,7 +22,7 @@ interface Cache {
 }
 
 const schema = z.object({
-  type: z.enum(['event', 'identify']),
+  type: z.enum(["event", "identify"]),
   payload: z
     .object({
       website: z.uuid().optional(),
@@ -46,14 +46,14 @@ const schema = z.object({
       device: z.string().optional(),
     })
     .refine(
-      data => {
+      (data) => {
         const keys = [data.website, data.link, data.pixel];
         const count = keys.filter(Boolean).length;
         return count === 1;
       },
       {
-        message: 'Exactly one of website, link, or pixel must be provided',
-        path: ['website'],
+        message: "Exactly one of website, link, or pixel must be provided",
+        path: ["website"],
       },
     ),
 });
@@ -68,22 +68,7 @@ export async function POST(request: Request) {
 
     const { type, payload } = body;
 
-    const {
-      website: websiteId,
-      pixel: pixelId,
-      link: linkId,
-      hostname,
-      screen,
-      language,
-      url,
-      referrer,
-      name,
-      data,
-      title,
-      tag,
-      timestamp,
-      id,
-    } = payload;
+    const { website: websiteId, pixel: pixelId, link: linkId, hostname, screen, language, url, referrer, name, data, title, tag, timestamp, id } = payload;
 
     const sourceId = websiteId || pixelId || linkId;
 
@@ -91,7 +76,7 @@ export async function POST(request: Request) {
     let cache: Cache | null = null;
 
     if (websiteId) {
-      const cacheHeader = request.headers.get('x-umami-cache');
+      const cacheHeader = request.headers.get("x-syncfuse-cache");
 
       if (cacheHeader) {
         const result = await parseToken(cacheHeader, secret());
@@ -106,20 +91,17 @@ export async function POST(request: Request) {
         const website = await fetchWebsite(websiteId);
 
         if (!website) {
-          return badRequest({ message: 'Website not found.' });
+          return badRequest({ message: "Website not found." });
         }
       }
     }
 
     // Client info
-    const { ip, userAgent, device, browser, os, country, region, city } = await getClientInfo(
-      request,
-      payload,
-    );
+    const { ip, userAgent, device, browser, os, country, region, city } = await getClientInfo(request, payload);
 
     // Bot check
     if (!process.env.DISABLE_BOT_CHECK && isbot(userAgent)) {
-      return json({ beep: 'boop' });
+      return json({ beep: "boop" });
     }
 
     // IP block
@@ -164,35 +146,34 @@ export async function POST(request: Request) {
     }
 
     if (type === COLLECTION_TYPE.event) {
-      const base = hostname ? `https://${hostname}` : 'https://localhost';
+      const base = hostname ? `https://${hostname}` : "https://localhost";
       const currentUrl = new URL(url, base);
 
-      let urlPath =
-        currentUrl.pathname === '/undefined' ? '' : currentUrl.pathname + currentUrl.hash;
+      let urlPath = currentUrl.pathname === "/undefined" ? "" : currentUrl.pathname + currentUrl.hash;
       const urlQuery = currentUrl.search.substring(1);
-      const urlDomain = currentUrl.hostname.replace(/^www./, '');
+      const urlDomain = currentUrl.hostname.replace(/^www./, "");
 
       let referrerPath: string;
       let referrerQuery: string;
       let referrerDomain: string;
 
       // UTM Params
-      const utmSource = currentUrl.searchParams.get('utm_source');
-      const utmMedium = currentUrl.searchParams.get('utm_medium');
-      const utmCampaign = currentUrl.searchParams.get('utm_campaign');
-      const utmContent = currentUrl.searchParams.get('utm_content');
-      const utmTerm = currentUrl.searchParams.get('utm_term');
+      const utmSource = currentUrl.searchParams.get("utm_source");
+      const utmMedium = currentUrl.searchParams.get("utm_medium");
+      const utmCampaign = currentUrl.searchParams.get("utm_campaign");
+      const utmContent = currentUrl.searchParams.get("utm_content");
+      const utmTerm = currentUrl.searchParams.get("utm_term");
 
       // Click IDs
-      const gclid = currentUrl.searchParams.get('gclid');
-      const fbclid = currentUrl.searchParams.get('fbclid');
-      const msclkid = currentUrl.searchParams.get('msclkid');
-      const ttclid = currentUrl.searchParams.get('ttclid');
-      const lifatid = currentUrl.searchParams.get('li_fat_id');
-      const twclid = currentUrl.searchParams.get('twclid');
+      const gclid = currentUrl.searchParams.get("gclid");
+      const fbclid = currentUrl.searchParams.get("fbclid");
+      const msclkid = currentUrl.searchParams.get("msclkid");
+      const ttclid = currentUrl.searchParams.get("ttclid");
+      const lifatid = currentUrl.searchParams.get("li_fat_id");
+      const twclid = currentUrl.searchParams.get("twclid");
 
       if (process.env.REMOVE_TRAILING_SLASH) {
-        urlPath = urlPath.replace(/\/(?=(#.*)?$)/, '');
+        urlPath = urlPath.replace(/\/(?=(#.*)?$)/, "");
       }
 
       if (referrer) {
@@ -200,16 +181,10 @@ export async function POST(request: Request) {
 
         referrerPath = referrerUrl.pathname;
         referrerQuery = referrerUrl.search.substring(1);
-        referrerDomain = referrerUrl.hostname.replace(/^www\./, '');
+        referrerDomain = referrerUrl.hostname.replace(/^www\./, "");
       }
 
-      const eventType = linkId
-        ? EVENT_TYPE.linkEvent
-        : pixelId
-          ? EVENT_TYPE.pixelEvent
-          : name
-            ? EVENT_TYPE.customEvent
-            : EVENT_TYPE.pageView;
+      const eventType = linkId ? EVENT_TYPE.linkEvent : pixelId ? EVENT_TYPE.pixelEvent : name ? EVENT_TYPE.customEvent : EVENT_TYPE.pageView;
 
       await saveEvent({
         websiteId: sourceId,
